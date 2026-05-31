@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1060510849208",
+    "project_id": "storymotion-studio-b8be5",
+    "storage_bucket": "storymotion-studio-b8be5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060510849208:android:f7a9926c590d84c5b1bc4d",
+        "android_client_info": {
+          "package_name": "com.company.StoryMotionStudio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1-kPY_p-xPtXXEiicleH7N_63eIy2q8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
