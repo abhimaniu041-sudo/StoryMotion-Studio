@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,7 +22,78 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Create .env
+      - name: Create fresh Flutter project
+        run: |
+          flutter create --org com.company --project-name storymotion_studio tmp_project
+          cp -r tmp_project/android ./android
+          rm -rf tmp_project
+
+      - name: Add google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > android/app/google-services.json
+
+      - name: Update app build.gradle
+        run: |
+          cat > android/app/build.gradle << 'EOF'
+          plugins {
+              id "com.android.application"
+              id "kotlin-android"
+              id "dev.flutter.flutter-gradle-plugin"
+              id "com.google.gms.google-services"
+          }
+          android {
+              namespace "com.company.storymotion_studio"
+              compileSdkVersion 34
+              defaultConfig {
+                  applicationId "com.company.storymotion_studio"
+                  minSdkVersion 21
+                  targetSdkVersion 34
+                  versionCode 1
+                  versionName "1.0.0"
+                  multiDexEnabled true
+              }
+              buildTypes {
+                  release {
+                      signingConfig signingConfigs.debug
+                  }
+              }
+          }
+          flutter {
+              source "../.."
+          }
+          dependencies {
+              implementation platform("com.google.firebase:firebase-bom:33.0.0")
+              implementation "com.google.firebase:firebase-analytics"
+              implementation "com.google.firebase:firebase-auth"
+              implementation "com.google.firebase:firebase-firestore"
+              implementation "com.google.firebase:firebase-storage"
+              implementation "androidx.multidex:multidex:2.0.1"
+          }
+          EOF
+
+      - name: Update project build.gradle
+        run: |
+          cat > android/build.gradle << 'EOF'
+          buildscript {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+              dependencies {
+                  classpath "com.android.tools.build:gradle:8.1.0"
+                  classpath "com.google.gms:google-services:4.4.0"
+                  classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.0"
+              }
+          }
+          allprojects {
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          EOF
+
+      - name: Create .env file
         run: |
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
           echo "GROQ_API_KEY=${{ secrets.GROQ_API_KEY }}" >> .env
@@ -37,5 +109,5 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: release-apk
+          name: StoryMotion-APK
           path: build/app/outputs/flutter-apk/app-release.apk
