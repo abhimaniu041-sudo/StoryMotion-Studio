@@ -19,7 +19,7 @@ class AuthService {
       email: email,
       password: password,
     );
-    return _getUserModel(cred.user!);
+    return getUserModel(cred.user!);
   }
 
   Future<UserModel?> signUpWithEmail({
@@ -62,7 +62,11 @@ class AuthService {
     final result = await _auth.signInWithCredential(cred);
     final user = result.user!;
 
-    final doc = await _firestore.collection('users').doc(user.uid).get();
+    final doc = await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
     if (!doc.exists) {
       final model = UserModel(
         uid: user.uid,
@@ -77,7 +81,7 @@ class AuthService {
           .set(model.toMap());
     }
 
-    return _getUserModel(user);
+    return getUserModel(user);
   }
 
   Future<UserModel?> signInAsGuest() async {
@@ -101,9 +105,11 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<UserModel?> _getUserModel(User user) async {
-    final doc =
-        await _firestore.collection('users').doc(user.uid).get();
+  Future<UserModel?> getUserModel(User user) async {
+    final doc = await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .get();
     if (doc.exists) {
       return UserModel.fromMap({...doc.data()!, 'uid': user.uid});
     }
