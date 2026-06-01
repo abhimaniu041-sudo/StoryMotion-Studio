@@ -2,14 +2,15 @@ plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
     id("org.jetbrains.kotlin.android")
+    id("dev.flutter.flutter-gradle-plugin")
 }
 
 android {
-    namespace = "com.company.storymotionstudio"
+    namespace = "com.company.storymotion_studio"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.company.storymotionstudio"
+        applicationId = "com.company.storymotion_studio"
         minSdk = 21
         targetSdk = 34
         versionCode = 1
@@ -28,13 +29,13 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+flutter {
+    source = "../.."
 }
 
 dependencies {
